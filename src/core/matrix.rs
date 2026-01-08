@@ -1,7 +1,7 @@
 use std::fmt;
 
 // defining a matrix struct (f64)
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Matrix
 {
     rows: usize,
@@ -34,8 +34,8 @@ impl Matrix
         Ok(Matrix { rows, cols, data })
     }
 
-    // "zeros" constructor, returns a zeroed out Matrix
-    pub fn zeroes(rows: usize, cols: usize) -> Result<Self, &'static str>
+    // "full" constructor, returns a Matrix filled with <fill_value>
+    pub fn full(rows: usize, cols: usize, fill_value: f64) -> Result<Self, &'static str>
     {
         // check rows and cols
         if rows <= 0
@@ -48,8 +48,14 @@ impl Matrix
             return Err("Col dim should be positive!");
         }
 
-        Ok(Matrix { rows, cols, data: vec![0 as f64; rows * cols] })
+        Ok(Matrix { rows, cols, data: vec![fill_value as f64; rows * cols] })
     }
+
+    // "zeros" constructor, returns a zeroed out Matrix
+    pub fn zeroes(rows: usize, cols: usize) -> Result<Self, &'static str> { Self::full(rows, cols, 0 as f64) }
+
+    // "ones" constructor, returns a Matrix filled with ones
+    pub fn ones(rows: usize, cols: usize) -> Result<Self, &'static str> { Self::full(rows, cols, 1 as f64) }
 
     // dim getters
     pub fn rows(&self) -> usize { self.rows }
