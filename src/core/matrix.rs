@@ -61,13 +61,7 @@ impl Matrix
 
 }
 
-
-
-
-
-
-
-
+// X----------X
 // impl fmt::Display trait for Matrix
 impl fmt::Display for Matrix
 {
