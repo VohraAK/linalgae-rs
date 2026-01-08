@@ -93,6 +93,82 @@ fn test_matrix_subtraction_dimension_mismatch() {
     let _ = &a - &b; // should panic
 }
 
+// -------- Full/Ones Constructor Tests --------
+
+#[test]
+fn test_matrix_full() {
+    let m = Matrix::full(2, 3, 7.5).unwrap();
+    
+    assert_eq!(m.rows(), 2);
+    assert_eq!(m.cols(), 3);
+    
+    for val in m.as_slice() {
+        assert_eq!(*val, 7.5);
+    }
+}
+
+#[test]
+fn test_matrix_ones() {
+    let m = Matrix::ones(3, 2).unwrap();
+    
+    assert_eq!(m.rows(), 3);
+    assert_eq!(m.cols(), 2);
+    
+    for val in m.as_slice() {
+        assert_eq!(*val, 1.0);
+    }
+}
+
+// -------- Scalar Multiplication Tests --------
+
+#[test]
+fn test_matrix_scalar_mul() {
+    let m = Matrix::new(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+    
+    let result = &m * 2.0;
+    
+    assert_eq!(result.as_slice(), &[2.0, 4.0, 6.0, 8.0]);
+}
+
+#[test]
+fn test_scalar_matrix_mul() {
+    let m = Matrix::new(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+    
+    let result = 3.0 * &m;
+    
+    assert_eq!(result.as_slice(), &[3.0, 6.0, 9.0, 12.0]);
+}
+
+#[test]
+fn test_matrix_scalar_mul_zero() {
+    let m = Matrix::new(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+    
+    let result = &m * 0.0;
+    
+    for val in result.as_slice() {
+        assert_eq!(*val, 0.0);
+    }
+}
+
+// -------- Scalar Division Tests --------
+
+#[test]
+fn test_matrix_scalar_div() {
+    let m = Matrix::new(2, 2, vec![2.0, 4.0, 6.0, 8.0]).unwrap();
+    
+    let result = &m / 2.0;
+    
+    assert_eq!(result.as_slice(), &[1.0, 2.0, 3.0, 4.0]);
+}
+
+#[test]
+#[should_panic(expected = "Cannot divide by zero")]
+fn test_matrix_scalar_div_by_zero() {
+    let m = Matrix::new(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+    
+    let _ = &m / 0.0; // should panic
+}
+
 // -------- Display Test --------
 
 #[test]
