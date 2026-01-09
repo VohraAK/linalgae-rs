@@ -2,7 +2,7 @@ use std::ops;
 use crate::core::matrix::Matrix;
 
 
-// ----------Operator Overloading----------//
+// ----------Arithmetic Operations----------//
 
 // addition
 impl ops::Add<&Matrix> for &Matrix
