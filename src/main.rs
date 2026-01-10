@@ -26,7 +26,7 @@ fn main()
             process::exit(1);
         });
 
-    let _matrix_4 = Matrix::<f64>::ones(4, 2).unwrap_or_else(|e| 
+    let _matrix_4 = Matrix::<i32>::identity(4).unwrap_or_else(|e| 
         {
             eprintln!("Error: {e}");
             process::exit(1);
