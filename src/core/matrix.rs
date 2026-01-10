@@ -15,21 +15,12 @@ impl Matrix
     pub fn new(rows: usize, cols: usize, data: Vec<f64>) -> Result<Self, &'static str>
     {
         // check rows and cols
-        if rows <= 0
-        {
-            return Err("Row dim should be positive!");
-        }
+        if rows <= 0 { return Err("Row dim should be positive!"); }
 
-        if cols <= 0
-        {
-            return Err("Col dim should be positive!");
-        }
+        if cols <= 0 { return Err("Col dim should be positive!"); }
 
         // check if number of elements equal to (rows x cols)
-        if (rows * cols) != data.len()
-        {
-            return Err("Input vector does not match dimensions!");
-        }
+        if (rows * cols) != data.len() { return Err("Input vector does not match dimensions!"); }
         
         Ok(Matrix { rows, cols, data })
     }
@@ -38,15 +29,9 @@ impl Matrix
     pub fn full(rows: usize, cols: usize, fill_value: f64) -> Result<Self, &'static str>
     {
         // check rows and cols
-        if rows <= 0
-        {
-            return Err("Row dim should be positive!");
-        }
+        if rows <= 0 { return Err("Row dim should be positive!"); }
 
-        if cols <= 0
-        {
-            return Err("Col dim should be positive!");
-        }
+        if cols <= 0 { return Err("Col dim should be positive!"); }
 
         Ok(Matrix { rows, cols, data: vec![fill_value as f64; rows * cols] })
     }
@@ -64,6 +49,26 @@ impl Matrix
     // data accessors implemented as slicers
     pub fn as_slice(&self) -> &[f64] { &self.data }
     pub fn as_mut_slice(&mut self) -> &mut[f64] { &mut self.data }
+
+    // transpose function
+    pub fn t(&self) -> Matrix
+    {
+        let rows = self.rows();
+        let cols = self.cols();
+        let mut result = vec![0 as f64; rows * cols];
+        let slice = self.as_slice();
+
+        for i in 0..rows 
+        { 
+            for j in 0..cols 
+            { 
+                result[j*rows +i] = slice[i*cols + j]; 
+            } 
+        }
+
+        Matrix::new(cols, rows, result).unwrap()
+
+    }
 
 }
 
