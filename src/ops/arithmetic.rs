@@ -1,15 +1,16 @@
 use std::ops;
 use crate::core::matrix::Matrix;
-
+use num_traits::Num;
 
 // ----------Arithmetic Operations----------//
 
 // addition
-impl ops::Add<&Matrix> for &Matrix
+impl<T> ops::Add<&Matrix<T>> for &Matrix<T>
+where T: Num + Copy + ops::Add<Output = T>
 {
-    type Output = Matrix;
+    type Output = Matrix<T>;
 
-    fn add(self, rhs: &Matrix) -> Self::Output 
+    fn add(self, rhs: &Matrix<T>) -> Self::Output 
     {
         let lhs_rows = self.rows();
         let lhs_cols = self.cols();
@@ -22,7 +23,7 @@ impl ops::Add<&Matrix> for &Matrix
             panic!("Matrix::Add: Dimension mismatch! ( ({}, {}) vs ({}, {}) )", lhs_rows, lhs_cols, rhs_rows, rhs_cols);
         }
 
-        let result = self.as_slice().iter().zip(rhs.as_slice().iter()).map(|(a, b)| a + b ).collect();
+        let result = self.as_slice().iter().zip(rhs.as_slice().iter()).map(|(a, b)| *a + *b ).collect();
 
         Matrix::new(lhs_rows, lhs_cols, result).expect("Matrix::Add: Result has incorrect dimensions!")
         
@@ -30,11 +31,12 @@ impl ops::Add<&Matrix> for &Matrix
 }
 
 // subtraction
-impl ops::Sub<&Matrix> for &Matrix
+impl<T> ops::Sub<&Matrix<T>> for &Matrix<T>
+where T: Num + Copy + ops::Sub<Output = T>
 {
-    type Output = Matrix;
+    type Output = Matrix<T>;
 
-    fn sub(self, rhs: &Matrix) -> Self::Output 
+    fn sub(self, rhs: &Matrix<T>) -> Self::Output 
     {
         let lhs_rows = self.rows();
         let lhs_cols = self.cols();
@@ -47,7 +49,7 @@ impl ops::Sub<&Matrix> for &Matrix
             panic!("Matrix::Sub: Dimension mismatch! ( ({}, {}) vs ({}, {}) )", lhs_rows, lhs_cols, rhs_rows, rhs_cols);
         }
 
-        let result = self.as_slice().iter().zip(rhs.as_slice().iter()).map(|(a, b)| a - b ).collect();
+        let result = self.as_slice().iter().zip(rhs.as_slice().iter()).map(|(a, b)| *a - *b ).collect();
 
         Matrix::new(lhs_rows, lhs_cols, result).expect("Matrix::Sub: Result has incorrect dimensions!")
         
@@ -55,40 +57,46 @@ impl ops::Sub<&Matrix> for &Matrix
 }
 
 // scalar mul (Matrix * scalar)
-impl ops::Mul<f64> for &Matrix
+impl<T, U> ops::Mul<U> for &Matrix<T>
+where T: Num + Copy + ops::Mul<U, Output = T>, U: Num + Copy,
 {
-    type Output = Matrix;
+    type Output = Matrix<T>;
 
-    fn mul(self, rhs: f64) -> Self::Output 
+    fn mul(self, rhs: U) -> Self::Output 
     {
         let lhs_rows = self.rows();
         let lhs_cols = self.cols();
 
-        let result = self.as_slice().iter().map(|a|  a * rhs).collect();
+        let result = self.as_slice().iter().map(|a| *a * rhs).collect();
 
         Matrix::new(lhs_rows, lhs_cols, result).expect("Matrix::Mul: Result has incorrect dimensions!")
-        
     }
 }
 
+// NOTE: removed this scalar mul fn, due to orphan-rule violation (could fix this but it would be a pain in the arse)
 // scalar mul (scalar * Matrix)
-impl ops::Mul<&Matrix> for f64
-{
-    type Output = Matrix;
+// impl<T: Num, U: Num> ops::Mul<&Matrix<T>> for U
+// where T: Copy + ops::Mul<U, Output = T>, U: Copy,
+// {
+//     type Output = Matrix<T>;
 
-    fn mul(self, rhs: &Matrix) -> Self::Output { rhs * self }
-}
+//     fn mul(self, rhs: &Matrix<T>) -> Self::Output 
+//     {
+//         rhs * self
+//     }
+// }
 
 // scalar div (Matrix / scalar)
-impl ops::Div<f64> for &Matrix
+impl<T, U> ops::Div<U> for &Matrix<T>
+where T: Num + Copy + ops::Div<U, Output = T>, U: Num + Copy
 {
-    type Output = Matrix;
+    type Output = Matrix<T>;
 
-    fn div(self, rhs: f64) -> Self::Output 
+    fn div(self, rhs: U) -> Self::Output 
     {
         // TODO: epsilon
         // check 0-divisor
-        if rhs == (0 as f64)
+        if rhs == (U::zero())
         {
             panic!("Matrix::Div: Cannot divide by zero!");
         }
@@ -96,7 +104,7 @@ impl ops::Div<f64> for &Matrix
         let lhs_rows = self.rows();
         let lhs_cols = self.cols();
 
-        let result = self.as_slice().iter().map(|a| a / rhs).collect();
+        let result = self.as_slice().iter().map(|a| *a / rhs).collect();
 
         Matrix::new(lhs_rows, lhs_cols, result).expect("Matrix::Div: Result has incorrect dimensions!") 
     }

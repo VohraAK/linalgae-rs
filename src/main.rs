@@ -5,7 +5,7 @@ fn main()
 {
     // TODO: make macros for Matrix init
     
-    let _matrix_1 = Matrix::zeroes(15, 12).unwrap_or_else(|e| 
+    let _matrix_1 = Matrix::<f64>::zeroes(15, 12).unwrap_or_else(|e| 
         {
             eprintln!("Error: {e}");
             process::exit(1);
@@ -14,19 +14,19 @@ fn main()
     // println!("{}", matrix_1);
     // println!("Dim: {} x {}", matrix_1.rows(), matrix_1.cols());
 
-    let _matrix_2 = Matrix::new(4, 2, vec![2., 3., 4., 81., -3., 7.44, -1110., 29229.]).unwrap_or_else(|e| 
+    let _matrix_2 = Matrix::<f64>::new(4, 2, vec![2., 3., 4., 81., -3., 7.44, -1110., 29229.]).unwrap_or_else(|e| 
         {
             eprintln!("Error: {e}");
             process::exit(1);
         });
 
-    let _matrix_3 = Matrix::new(4, 2, vec![2., 3., 4., 81., -3., 7.44, -1110., 29229.]).unwrap_or_else(|e| 
+    let _matrix_3 = Matrix::<f64>::new(4, 2, vec![2., 3., 4., 81., -3., 7.44, -1110., 29229.]).unwrap_or_else(|e| 
         {
             eprintln!("Error: {e}");
             process::exit(1);
         });
 
-    let _matrix_4 = Matrix::ones(4, 2).unwrap_or_else(|e| 
+    let _matrix_4 = Matrix::<f64>::ones(4, 2).unwrap_or_else(|e| 
         {
             eprintln!("Error: {e}");
             process::exit(1);

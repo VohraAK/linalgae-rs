@@ -1,15 +1,17 @@
 use std::ops;
 use crate::core::matrix::Matrix;
+use num_traits::Num;
 
 
 //----------Linear Algebra Operations----------//
 
 // inner product / matmul
-impl ops::Mul<&Matrix> for &Matrix
+impl<T> ops::Mul<&Matrix<T>> for &Matrix<T>
+where T: Num + Copy + ops::AddAssign
 {
-    type Output = Matrix;
+    type Output = Matrix<T>;
 
-    fn mul(self, rhs: &Matrix) -> Self::Output 
+    fn mul(self, rhs: &Matrix<T>) -> Self::Output 
     {
         let lhs_cols = self.cols();
         let rhs_rows = rhs.rows();
@@ -26,14 +28,14 @@ impl ops::Mul<&Matrix> for &Matrix
         let lhs_slice = self.as_slice();
         let rhs_slice = rhs.as_slice();
 
-        let mut result = vec![0 as f64; lhs_rows * rhs_cols];
+        let mut result = vec![T::zero(); lhs_rows * rhs_cols];
 
         // TODO: improve naive O(N^3) implementation
         for i in 0..lhs_rows
         {
             for j in 0..rhs_cols
             {
-                let mut dot_product = 0.0;
+                let mut dot_product = T::zero();
 
                 for k in 0..lhs_cols
                 {
