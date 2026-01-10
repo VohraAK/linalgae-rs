@@ -1,4 +1,5 @@
 use std::fmt;
+use std::ops::Fn;
 
 // defining a matrix struct (f64)
 #[derive(Debug, Clone, PartialEq)]
@@ -68,6 +69,15 @@ impl Matrix
 
         Matrix::new(cols, rows, result).unwrap()
 
+    }
+
+    // apply function -> applies a closure / function to all values of the matrix
+    // using Fn syntax since it can both capture variables from outer scopes, and act as a regular function
+    pub fn apply(&self, func: impl Fn(f64) -> f64) -> Matrix
+    {
+        let result = self.data.as_slice().iter().map(|x| func(*x)).collect();
+
+        Matrix::new(self.rows, self.cols, result).unwrap()
     }
 
 }
