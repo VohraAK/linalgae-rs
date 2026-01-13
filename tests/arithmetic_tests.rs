@@ -1,4 +1,4 @@
-use linalgae_rs::core::matrix::Matrix;
+use linalgae_rs::{matrix, core::matrix::Matrix};
 use num_traits::{Zero, Num};
 use std::fmt::Debug;
 use std::ops::{Add, Sub, Mul, Div};
@@ -10,8 +10,8 @@ where
     T: Num + Copy + Clone + PartialEq + Debug + From<u8>,
     for<'a> &'a Matrix<T>: Add<&'a Matrix<T>, Output = Matrix<T>>,
 {
-    let a = Matrix::new(2, 2, vec![T::from(1), T::from(2), T::from(3), T::from(4)]).unwrap();
-    let b = Matrix::new(2, 2, vec![T::from(5), T::from(6), T::from(7), T::from(8)]).unwrap();
+    let a = matrix![[T::from(1), T::from(2)], [T::from(3), T::from(4)]];
+    let b = matrix![[T::from(5), T::from(6)], [T::from(7), T::from(8)]];
     let c = &a + &b;
     assert_eq!(c.as_slice(), &[T::from(6), T::from(8), T::from(10), T::from(12)]);
 }
@@ -21,8 +21,8 @@ where
     T: Num + Copy + Clone + PartialEq + Debug + From<u8>,
     for<'a> &'a Matrix<T>: Sub<&'a Matrix<T>, Output = Matrix<T>>,
 {
-    let a = Matrix::new(2, 2, vec![T::from(5), T::from(6), T::from(7), T::from(8)]).unwrap();
-    let b = Matrix::new(2, 2, vec![T::from(1), T::from(2), T::from(3), T::from(4)]).unwrap();
+    let a = matrix![[T::from(5), T::from(6)], [T::from(7), T::from(8)]];
+    let b = matrix![[T::from(1), T::from(2)], [T::from(3), T::from(4)]];
     let c = &a - &b;
     assert_eq!(c.as_slice(), &[T::from(4), T::from(4), T::from(4), T::from(4)]);
 }
@@ -32,7 +32,7 @@ where
     T: Num + Copy + Clone + PartialEq + Debug + From<u8>,
     for<'a> &'a Matrix<T>: Mul<T, Output = Matrix<T>>,
 {
-    let a = Matrix::new(2, 2, vec![T::from(1), T::from(2), T::from(3), T::from(4)]).unwrap();
+    let a = matrix![[T::from(1), T::from(2)], [T::from(3), T::from(4)]];
     let c = &a * T::from(2);
     assert_eq!(c.as_slice(), &[T::from(2), T::from(4), T::from(6), T::from(8)]);
 }
@@ -42,7 +42,7 @@ where
     T: Num + Copy + Clone + PartialEq + Debug + From<u8>,
     for<'a> &'a Matrix<T>: Div<T, Output = Matrix<T>>,
 {
-    let a = Matrix::new(2, 2, vec![T::from(2), T::from(4), T::from(6), T::from(8)]).unwrap();
+    let a = matrix![[T::from(2), T::from(4)], [T::from(6), T::from(8)]];
     let c = &a / T::from(2);
     assert_eq!(c.as_slice(), &[T::from(1), T::from(2), T::from(3), T::from(4)]);
 }
@@ -52,7 +52,7 @@ where
     T: Num + Copy + Clone + PartialEq + Debug + Default + Zero + From<u8>,
     for<'a> &'a Matrix<T>: Add<&'a Matrix<T>, Output = Matrix<T>>,
 {
-    let a = Matrix::new(2, 2, vec![T::from(1), T::from(2), T::from(3), T::from(4)]).unwrap();
+    let a = matrix![[T::from(1), T::from(2)], [T::from(3), T::from(4)]];
     let z = Matrix::<T>::zeroes(2, 2).unwrap();
     let c = &a + &z;
     assert_eq!(c.as_slice(), a.as_slice());
@@ -63,7 +63,7 @@ where
     T: Num + Copy + Clone + PartialEq + Debug + Default + Zero + From<u8>,
     for<'a> &'a Matrix<T>: Sub<&'a Matrix<T>, Output = Matrix<T>>,
 {
-    let a = Matrix::new(2, 2, vec![T::from(1), T::from(2), T::from(3), T::from(4)]).unwrap();
+    let a = matrix![[T::from(1), T::from(2)], [T::from(3), T::from(4)]];
     let c = &a - &a;
     for val in c.as_slice() {
         assert_eq!(*val, T::zero());
@@ -75,7 +75,7 @@ where
     T: Num + Copy + Clone + PartialEq + Debug + Default + Zero + From<u8>,
     for<'a> &'a Matrix<T>: Mul<T, Output = Matrix<T>>,
 {
-    let a = Matrix::new(2, 2, vec![T::from(1), T::from(2), T::from(3), T::from(4)]).unwrap();
+    let a = matrix![[T::from(1), T::from(2)], [T::from(3), T::from(4)]];
     let c = &a * T::zero();
     for val in c.as_slice() {
         assert_eq!(*val, T::zero());
@@ -87,7 +87,7 @@ where
     T: Num + Copy + Clone + PartialEq + Debug + From<u8>,
     for<'a> &'a Matrix<T>: Mul<T, Output = Matrix<T>>,
 {
-    let a = Matrix::new(2, 2, vec![T::from(1), T::from(2), T::from(3), T::from(4)]).unwrap();
+    let a = matrix![[T::from(1), T::from(2)], [T::from(3), T::from(4)]];
     let c = &a * T::one();
     assert_eq!(c.as_slice(), a.as_slice());
 }
@@ -100,8 +100,8 @@ where
         + Mul<T, Output = Matrix<T>>
         + Div<T, Output = Matrix<T>>,
 {
-    let a = Matrix::new(1, 1, vec![T::from(10)]).unwrap();
-    let b = Matrix::new(1, 1, vec![T::from(5)]).unwrap();
+    let a = matrix![[T::from(10)]];
+    let b = matrix![[T::from(5)]];
 
     let add = &a + &b;
     assert_eq!(add.as_slice()[0], T::from(15));
@@ -218,22 +218,22 @@ fn test_scalar_multiplication_i64() { test_scalar_multiplication::<i64>(); }
 
 #[test]
 fn test_add_with_infinity() {
-    let a = Matrix::new(2, 2, vec![f64::INFINITY, 1.0, 2.0, 3.0]).unwrap();
-    let b = Matrix::new(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+    let a = matrix![[f64::INFINITY, 1.0], [2.0, 3.0]];
+    let b = matrix![[1.0, 2.0], [3.0, 4.0]];
     let c = &a + &b;
     assert_eq!(c.as_slice()[0], f64::INFINITY);
 }
 
 #[test]
 fn test_subtract_infinity_from_infinity() {
-    let a = Matrix::new(1, 1, vec![f64::INFINITY]).unwrap();
+    let a = matrix![[f64::INFINITY]];
     let c = &a - &a;
     assert!(c.as_slice()[0].is_nan());
 }
 
 #[test]
 fn test_multiply_infinity_by_zero() {
-    let a = Matrix::new(1, 1, vec![f64::INFINITY]).unwrap();
+    let a = matrix![[f64::INFINITY]];
     let c = &a * 0.0;
     assert!(c.as_slice()[0].is_nan());
 }
@@ -241,22 +241,22 @@ fn test_multiply_infinity_by_zero() {
 #[test]
 #[should_panic(expected = "Cannot divide by zero")]
 fn test_divide_by_zero() {
-    let a = Matrix::new(1, 1, vec![1.0]).unwrap();
+    let a = matrix![[1.0]];
     let _ = &a / 0.0;
 }
 
 #[test]
 fn test_nan_propagation() {
-    let a = Matrix::new(2, 2, vec![f64::NAN, 1.0, 2.0, 3.0]).unwrap();
-    let b = Matrix::new(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+    let a = matrix![[f64::NAN, 1.0], [2.0, 3.0]];
+    let b = matrix![[1.0, 2.0], [3.0, 4.0]];
     let c = &a + &b;
     assert!(c.as_slice()[0].is_nan());
 }
 
 #[test]
 fn test_negative_values_subtraction() {
-    let a = Matrix::new(2, 2, vec![1.0, -2.0, -3.0, 4.0]).unwrap();
-    let b = Matrix::new(2, 2, vec![-1.0, 2.0, 3.0, -4.0]).unwrap();
+    let a = matrix![[1.0, -2.0], [-3.0, 4.0]];
+    let b = matrix![[-1.0, 2.0], [3.0, -4.0]];
     let c = &a - &b;
     assert_eq!(c.as_slice(), &[2.0, -4.0, -6.0, 8.0]);
 }
