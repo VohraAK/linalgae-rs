@@ -1,4 +1,4 @@
-use linalgae_rs::matrix;
+use linalgae_rs::core::matrix::Matrix;
 
 fn main()
 {
@@ -54,16 +54,20 @@ fn main()
 
     // assert_eq!(result_1, result_2);
 
-    let matrix_1 = matrix![[1., 2., 3., 4.], [5., 6., 7., 8.], [9., 10., 11., 12.]];
+    // let matrix_1 = matrix![[1., 2., 3., 4.], [5., 6., 7., 8.], [9., 10., 11., 12.]];
 
-    println!("\nmatrix_1: \n{}", matrix_1);
+    // println!("\nmatrix_1: \n{}", matrix_1);
 
-    let matrix_2 = matrix_1.apply(|x| x * x);
+    // let matrix_2 = matrix_1.apply(|x| x * x);
 
-    println!("\nmatrix_2: \n{}", matrix_2);
+    // println!("\nmatrix_2: \n{}", matrix_2);
     
-    let matrix_3 = matrix_2.t().apply(|y| y / (2.0*y + 1.0));
+    // let matrix_3 = matrix_2.t().apply(|y| y / (2.0*y + 1.0));
 
-    println!("\nmatrix_3: \n{}", matrix_3);
+    // println!("\nmatrix_3: \n{}", matrix_3);
+
+    let rand_1 = Matrix::<f64>::rand_init(5, 4);
+
+    println!("{}", rand_1);
     
 }

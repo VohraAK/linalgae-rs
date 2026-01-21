@@ -1,5 +1,7 @@
 use std::fmt::{self, Display};
-use std::ops::Fn;
+use std::ops::{AddAssign, Fn};
+use rand::prelude::*;
+use rand_distr::{StandardNormal, Distribution};
 use num_traits::Num;
 
 // defining a matrix struct (generic type)
@@ -19,9 +21,9 @@ where T: Num
     pub fn new(rows: usize, cols: usize, data: Vec<T>) -> Result<Self, &'static str>
     {
         // check rows and cols
-        if rows <= 0 { return Err("Row dim should be positive!"); }
+        if rows == 0 { return Err("Row dim should be positive!"); }
 
-        if cols <= 0 { return Err("Col dim should be positive!"); }
+        if cols == 0 { return Err("Col dim should be positive!"); }
 
         // check if number of elements equal to (rows x cols)
         if (rows * cols) != data.len() { return Err("Input vector does not match dimensions!"); }
@@ -34,9 +36,9 @@ where T: Num
     where T: Clone
     {
         // check rows and cols
-        if rows <= 0 { return Err("Row dim should be positive!"); }
+        if rows == 0 { return Err("Row dim should be positive!"); }
 
-        if cols <= 0 { return Err("Col dim should be positive!"); }
+        if cols == 0 { return Err("Col dim should be positive!"); }
 
         Ok(Matrix { rows, cols, data: vec![fill_value; rows * cols] })
     }
@@ -59,7 +61,7 @@ where T: Num
     pub fn identity(n: usize) -> Result<Self, &'static str>
     where T: Num + Clone + Copy
     {
-        if n <= 0 { return Err("Dimension should be positive!"); }
+        if n == 0 { return Err("Dimension should be positive!"); }
 
         let mut mat = Self::zeroes(n, n)?;
         let data = mat.as_mut_slice();
@@ -111,6 +113,96 @@ where T: Num
         Matrix::new(self.rows, self.cols, result).unwrap()
     }
 
+    // matmul function
+    pub fn matmul(&self, other: &Matrix<T>) -> Matrix<T>
+    where T: Num + Copy + AddAssign
+    {
+        let lhs_cols = self.cols();
+        let rhs_rows = other.rows();
+        
+        // check size
+        if lhs_cols != rhs_rows
+        {
+            panic!("Matrix::matmul: lhs_cols ({}) != rhs_rows ({})", lhs_cols, rhs_rows);
+        }
+
+        let lhs_rows = self.rows();
+        let rhs_cols = other.cols();
+
+        let lhs_slice = self.as_slice();
+        let rhs_slice = other.as_slice();
+
+        let mut result = vec![T::zero(); lhs_rows * rhs_cols];
+
+        for i in 0..lhs_rows
+        {
+            for j in 0..rhs_cols
+            {
+                let mut dot_product = T::zero();
+
+                for k in 0..lhs_cols
+                {
+                    let lhs_idx = i * lhs_cols + k;
+                    let rhs_idx = k * rhs_cols + j;
+
+                    dot_product += lhs_slice[lhs_idx] * rhs_slice[rhs_idx];
+                }
+
+                let res_idx = i * rhs_cols + j;
+                result[res_idx] = dot_product;
+            }
+        }
+
+        Matrix::new(lhs_rows, rhs_cols, result).expect("Matrix::matmul: Result has incorrect dimensions!")
+    }
+
+    // Hadamard multiplication
+    pub fn component_mul(&self, other: &Matrix<T>) -> Matrix<T>
+    where T: Num + Copy
+    {
+        let rows = self.rows();
+        let cols = self.cols();
+        let other_rows = other.rows();
+        let other_cols = other.cols();
+
+        // check size
+        if rows != other_rows || cols != other_cols
+        {
+            panic!("Matrix::component_mul: Dimension mismatch!")
+        }
+
+        let result = self.data.iter().zip(other.data.iter()).map(|(&a, &b)| a * b).collect();
+
+        Matrix::new(rows, cols, result).expect("Matrix::component_mul: Error!")
+        
+    }
+
+    // sum func
+    pub fn sum(&self) -> T
+    where T: Copy + std::iter::Sum<T>
+    {
+        self.data.iter().copied().sum()
+    }
+}
+
+impl<T> Matrix<T>
+where T: Copy + Num,
+StandardNormal: Distribution<T>
+{
+    pub fn rand_init(rows: usize, cols: usize) -> Matrix<T>
+    {
+        // check rows and cols
+        if rows == 0 { panic!("Row dim should be positive!"); }
+
+        if cols == 0 { panic!("Col dim should be positive!"); }
+
+        let mut rng = rand::rng();
+
+        let data = vec![T::zero(); rows * cols].iter().map(|_| rng.sample(StandardNormal)).collect();
+
+        Matrix::new(rows, cols, data).expect("Martix::rand_init: Error!")
+
+    }
 }
 
 // X----------X
