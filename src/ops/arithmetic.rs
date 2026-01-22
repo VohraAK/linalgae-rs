@@ -109,3 +109,49 @@ where T: Num + Copy + ops::Div<U, Output = T>, U: Num + Copy
         Matrix::new(lhs_rows, lhs_cols, result).expect("Matrix::Div: Result has incorrect dimensions!") 
     }
 }
+
+// inplace add_assign
+impl<T> ops::AddAssign<&Matrix<T>> for Matrix<T>
+where T: Num + Copy + ops::AddAssign,
+{
+    fn add_assign(&mut self, rhs: &Matrix<T>) 
+    {
+        let lhs_rows = self.rows();
+        let lhs_cols = self.cols();
+        let rhs_rows = rhs.rows();
+        let rhs_cols = rhs.cols();
+
+        if lhs_rows != rhs_rows || lhs_cols != rhs_cols 
+        {
+            panic!("Matrix::AddAssign: Dimension mismatch!");
+        }
+
+        for (l, r) in self.as_mut_slice().iter_mut().zip(rhs.as_slice().iter()) 
+        {
+            *l += *r;
+        }
+    }   
+}
+
+// inplace sub_assign
+impl<T> ops::SubAssign<&Matrix<T>> for Matrix<T>
+where T: Num + Copy + ops::SubAssign,
+{
+    fn sub_assign(&mut self, rhs: &Matrix<T>) 
+    {    
+        let lhs_rows = self.rows();
+        let lhs_cols = self.cols();
+        let rhs_rows = rhs.rows();
+        let rhs_cols = rhs.cols();
+
+        if lhs_rows != rhs_rows || lhs_cols != rhs_cols 
+        {
+            panic!("Matrix::SubAssign: Dimension mismatch!");
+        }
+
+        for (l, r) in self.as_mut_slice().iter_mut().zip(rhs.as_slice().iter()) 
+        {
+            *l -= *r;
+        }
+    }   
+}

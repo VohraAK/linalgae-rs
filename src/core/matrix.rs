@@ -1,5 +1,5 @@
 use std::fmt::{self, Display};
-use std::ops::{AddAssign, Fn};
+use std::ops::{self, AddAssign, Fn};
 use rand::prelude::*;
 use rand_distr::{StandardNormal, Distribution};
 use num_traits::Num;
@@ -179,6 +179,29 @@ where T: Num
     where T: Copy + std::iter::Sum<T>
     {
         self.data.iter().copied().sum()
+    }
+
+    pub fn sub_assign_scaled(&mut self, other: &Matrix<T>, scalar: T)
+    where T: ops::SubAssign + ops::Mul<Output = T> + Copy
+    {
+        // check size
+        let lhs_rows = self.rows();
+        let lhs_cols = self.cols();
+        let other_rows = other.rows();
+        let other_cols = other.cols();
+
+        if lhs_rows != other_rows || lhs_cols != other_cols 
+        {
+            panic!("Matrix::sub_assign_scaled: Dimension mismatch!");
+        }
+
+        let self_mut_slice = self.as_mut_slice();
+        let other_mut_slice = other.as_slice();
+
+        for (a, b) in self_mut_slice.iter_mut().zip(other_mut_slice.iter())
+        {
+            *a -= *b * scalar;
+        }
     }
 }
 
