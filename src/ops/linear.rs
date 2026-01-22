@@ -30,25 +30,19 @@ where T: Num + Copy + ops::AddAssign
 
         let mut result = vec![T::zero(); lhs_rows * rhs_cols];
 
-        // TODO: improve naive O(N^3) implementation
-        for i in 0..lhs_rows
+        // optimised version of matmul, should be much faster
+        for i in 0..lhs_rows 
         {
-            for j in 0..rhs_cols
+            for k in 0..lhs_cols 
             {
-                let mut dot_product = T::zero();
-
-                for k in 0..lhs_cols
+                let lhs_val = lhs_slice[i * lhs_cols + k];
+                
+                for j in 0..rhs_cols 
                 {
-                    // arr_1[i][k] * arr_2[k][j]
-                    let lhs_idx = i*lhs_cols + k;
-                    let rhs_idx = k*rhs_cols + j;
-
-                    dot_product += lhs_slice[lhs_idx] * rhs_slice[rhs_idx];
+                    let rhs_val = rhs_slice[k * rhs_cols + j];
+                    let res_idx = i * rhs_cols + j;
+                    result[res_idx] += lhs_val * rhs_val;
                 }
-
-                // assign dot product to result
-                let res_idx = i*rhs_cols + j;
-                result[res_idx] = dot_product;
             }
         }
 
