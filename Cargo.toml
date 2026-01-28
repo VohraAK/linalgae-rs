@@ -1,8 +1,8 @@
 [package]
 name = "linalgae-rs"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2024"
-description = "linalgae-rs is a lightweight, generic linear algebra library for Rust, providing a Matrix<T> struct with support for arithmetic operations and random initialization."
+description = "linalgae-rs is a lightweight, generic linear algebra library for Rust, with support for arithmetic operations and random initialization."
 license = "MIT"
 repository = "https://github.com/VohraAK/linalgae-rs"
 

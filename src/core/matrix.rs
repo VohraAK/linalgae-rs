@@ -113,6 +113,18 @@ where T: Num
         Matrix::new(self.rows, self.cols, result).unwrap()
     }
 
+    // inplace apply, reduces allocs
+    pub fn apply_inplace(mut self, func: impl Fn(T) -> T) -> Self
+    where T: Copy
+    {
+        for val in self.as_mut_slice().iter_mut()
+        {
+            *val = func(*val)
+        }
+
+        self
+    }
+
     // matmul function
     pub fn matmul(&self, other: &Matrix<T>) -> Matrix<T>
     where T: Num + Copy + AddAssign
@@ -172,6 +184,29 @@ where T: Num
 
         Matrix::new(rows, cols, result).expect("Matrix::component_mul: Error!")
         
+    }
+
+    // inplace hadamard
+    pub fn component_mul_inplace(mut self, other: &Matrix<T>) -> Self
+    where T: Copy + ops::MulAssign
+    {
+        let rows = self.rows();
+        let cols = self.cols();
+        let other_rows = other.rows();
+        let other_cols = other.cols();
+
+        // check size
+        if rows != other_rows || cols != other_cols
+        {
+            panic!("Matrix::component_mul: Dimension mismatch!")
+        } 
+
+        for (a, b) in self.as_mut_slice().iter_mut().zip(other.as_slice().iter())
+        {
+            *a *= *b;
+        }
+        
+        self
     }
 
     // sum func
